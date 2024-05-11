@@ -53,6 +53,7 @@ import {
   $skill,
   $slot,
   $stat,
+  byClass,
   clamp,
   Clan,
   CombatLoversLocket,
@@ -467,11 +468,26 @@ export const RunStartQuest: Quest = {
       do: () => cliExecute("autumnaton send The Sleazy Back Alley"),
       limit: { tries: 1 },
     },
+	 {
+      name: "Set Workshed",
+      completed: () =>
+        getWorkshed() === $item`Asdon Martin keyfob` || !get("instant_useAsdon", false),
+      do: () => use($item`Asdon Martin keyfob`),
+    },
+    {
+      name: "Learn About Bugs",
+      ready: () => have($item`S.I.T. Course Completion Certificate`),
+      completed: () => get("_sitCourseCompleted") || have($skill`Insectologist`),
+      do: () => use($item`S.I.T. Course Completion Certificate`),
+      choices: { 1494: 2 },
+    },
     {
       name: "Configure Trainset",
       completed: () =>
         !have($item`model train set`) ||
-        (getWorkshed() === $item`model train set` && !canConfigure()),
+        (getWorkshed() === $item`model train set` && !canConfigure()) ||
+		get("instant_skipBorrowedTime", false) ||
+        get("instant_useAsdon", false),
       do: (): void => {
         const statStation: Station = {
           Muscle: Station.BRAWN_SILO,

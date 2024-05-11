@@ -1,7 +1,11 @@
+import { StrictCombatTask } from "grimoire-kolmafia";
 import {
+  availableAmount,
+  buy,
   canEquip,
   chew,
   cliExecute,
+  create,
   drink,
   eat,
   Effect,
@@ -11,6 +15,7 @@ import {
   familiarWeight,
   getCampground,
   getClanName,
+  getFuel,
   gitInfo,
   haveEffect,
   haveEquipped,
@@ -55,9 +60,11 @@ import {
   $skills,
   $slot,
   $stat,
+  AsdonMartin,
   Clan,
   CombatLoversLocket,
   CommunityService,
+  Delayed,
   get,
   getKramcoWandererChance,
   have,
@@ -128,6 +135,14 @@ export function simpleDateDiff(t1: string, t2: string): number {
   const msDiff = 1000 * secDiff + toInt(t2.slice(14)) - toInt(t1.slice(14));
 
   return msDiff;
+}
+
+export function fuelUp(): void {
+  buy(1, $item`all-purpose flower`);
+  use(1, $item`all-purpose flower`);
+  buy(availableAmount($item`wad of dough`), $item`soda water`);
+  create(availableAmount($item`wad of dough`), $item`loaf of soda bread`);
+  cliExecute(`asdonmartin fuel ${availableAmount($item`loaf of soda bread`)} soda bread`);
 }
 
 // From phccs

@@ -89,6 +89,7 @@ import {
   burnLibram,
   canPull,
   chooseLibram,
+  fuelUp,
   generalStoreXpEffect,
   getSynthExpBuff,
   getValidComplexCandyPairs,
@@ -121,6 +122,7 @@ import {
   chooseRift,
   rufusTarget,
 } from "libram/dist/resources/2023/ClosedCircuitPayphone";
+import { drive } from "libram/dist/resources/2017/AsdonMartin";
 
 const useCinch = !get("instant_saveCinch", false);
 const baseBoozes = $items`bottle of rum, boxed wine, bottle of gin, bottle of vodka, bottle of tequila, bottle of whiskey`;
@@ -372,6 +374,14 @@ export const LevelingQuest: Quest = {
           buy($coinmaster`Mr. Store 2002`, 1, $item`Charter: Nellyville`);
         }
         use($item`Charter: Nellyville`, 1);
+      },
+      limit: { tries: 3 },
+    },
+	 {
+      name: "Driving Recklessly",
+      completed: () => have($effect`Driving Recklessly`) || !get("instant_useAsdon", false),
+      do: (): void => {
+        fuelUp(), drive($effect`Driving Recklessly`);
       },
       limit: { tries: 3 },
     },
