@@ -14,6 +14,8 @@ import {
   myHp,
   myInebriety,
   myMaxhp,
+  myMaxmp,
+  myMp,
   myThrall,
   numericModifier,
   outfit,
@@ -21,6 +23,8 @@ import {
   restoreHp,
   restoreMp,
   retrieveItem,
+  totalFreeRests,
+  use,
   useSkill,
   visitUrl,
 } from "kolmafia";
@@ -62,6 +66,25 @@ export const SpellDamageQuest: Quest = {
   name: "Spell Damage",
   completed: () => CommunityService.SpellDamage.isDone(),
   tasks: [
+	{
+      name: "Restore mp",
+      completed: () =>
+        get("timesRested") >= totalFreeRests() - get("instant_saveFreeRests", 0) ||
+        myMp() >= Math.min(500, myMaxmp()),
+      prepare: (): void => {
+        if (have($item`Newbiesport™ tent`)) use($item`Newbiesport™ tent`);
+      },
+      do: (): void => {
+        if (get("chateauAvailable")) {
+          visitUrl("place.php?whichplace=chateau&action=chateau_restbox");
+        } else if (get("getawayCampsiteUnlocked")) {
+          visitUrl("place.php?whichplace=campaway&action=campaway_tentclick");
+        } else {
+          visitUrl("campground.php?action=rest");
+        }
+      },
+      outfit: { modifier: "myst, mp, -tie" },
+    },
     {
       name: "Simmer",
       completed: () => have($effect`Simmering`) || !have($skill`Simmer`),

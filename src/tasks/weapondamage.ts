@@ -11,7 +11,9 @@ import {
   myHash,
   myInebriety,
   myMaxhp,
+  myMaxmp,
   myMeat,
+  myMp,
   myThrall,
   numericModifier,
   outfit,
@@ -19,6 +21,8 @@ import {
   restoreHp,
   restoreMp,
   retrieveItem,
+  totalFreeRests,
+  use,
   useSkill,
   visitUrl,
 } from "kolmafia";
@@ -61,6 +65,25 @@ export const WeaponDamageQuest: Quest = {
   name: "Weapon Damage",
   completed: () => CommunityService.WeaponDamage.isDone(),
   tasks: [
+	{
+      name: "Restore mp",
+      completed: () =>
+        get("timesRested") >= totalFreeRests() - get("instant_saveFreeRests", 0) ||
+        myMp() >= Math.min(700, myMaxmp()),
+      prepare: (): void => {
+        if (have($item`Newbiesport™ tent`)) use($item`Newbiesport™ tent`);
+      },
+      do: (): void => {
+        if (get("chateauAvailable")) {
+          visitUrl("place.php?whichplace=chateau&action=chateau_restbox");
+        } else if (get("getawayCampsiteUnlocked")) {
+          visitUrl("place.php?whichplace=campaway&action=campaway_tentclick");
+        } else {
+          visitUrl("campground.php?action=rest");
+        }
+      },
+      outfit: { modifier: "myst, mp, -tie" },
+    },
     {
       name: "Drink Sockdollager",
       completed: () =>
