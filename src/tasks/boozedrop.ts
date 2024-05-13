@@ -17,11 +17,14 @@ import {
   itemAmount,
   myInebriety,
   myMaxhp,
+  myMaxmp,
   myMeat,
+  myMp,
   print,
   restoreHp,
   restoreMp,
   retrieveItem,
+  totalFreeRests,
   use,
   useFamiliar,
   useSkill,
@@ -354,6 +357,25 @@ export const BoozeDropQuest: Quest = {
       completed: () => !have($item`Apriling band helmet`) || get("nextAprilBandTurn") > 0,
       do: () => cliExecute("aprilband effect drop"),
       limit: { tries: 1 },
+    },
+	{
+      name: "Restore mp",
+      completed: () =>
+        get("timesRested") >= totalFreeRests() - get("instant_saveFreeRests", 0) ||
+        myMp() >= Math.min(500, myMaxmp()),
+      prepare: (): void => {
+        if (have($item`Newbiesport™ tent`)) use($item`Newbiesport™ tent`);
+      },
+      do: (): void => {
+        if (get("chateauAvailable")) {
+          visitUrl("place.php?whichplace=chateau&action=chateau_restbox");
+        } else if (get("getawayCampsiteUnlocked")) {
+          visitUrl("place.php?whichplace=campaway&action=campaway_tentclick");
+        } else {
+          visitUrl("campground.php?action=rest");
+        }
+      },
+      outfit: { modifier: "myst, mp, -tie" },
     },
     {
       name: "Test",
